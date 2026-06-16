@@ -7,18 +7,42 @@
 @endphp
 
 {{-- ── Page Header ──────────────────────────────────── --}}
-<section class="py-20 text-center" style="background:#EDE8DF;">
-    <div class="max-w-3xl mx-auto px-5">
-        <div data-animate class="deco-rule justify-center mb-6">Koleksi</div>
+@php
+    $catVideo = $settings->get('catalog_video');
+    $catImage = $settings->get('catalog_image');
+    $catHasMedia = $catVideo || $catImage;
+@endphp
+<section class="relative overflow-hidden text-center"
+         style="min-height:{{ $catHasMedia ? '340px' : 'auto' }};background:#EDE8DF;display:flex;align-items:center;justify-content:center;padding:{{ $catHasMedia ? '0' : '5rem 0' }}">
+
+    @if($catVideo)
+        <video muted loop playsinline preload="none"
+               data-lazy-video="{{ Storage::url($catVideo) }}"
+               @if($catImage) poster="{{ Storage::url($catImage) }}" @endif
+               style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;background:#EDE8DF;">
+        </video>
+    @elseif($catImage)
+        <img src="{{ Storage::url($catImage) }}" alt=""
+             style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;">
+    @endif
+
+    @if($catHasMedia)
+        <div style="position:absolute;inset:0;z-index:1;background:rgba(28,25,23,0.55);"></div>
+        <div style="position:absolute;inset:0;z-index:1;background:linear-gradient(to top,rgba(28,25,23,0.7) 0%,transparent 60%);"></div>
+    @endif
+
+    <div class="max-w-3xl mx-auto px-5" style="position:relative;z-index:10;padding-top:5rem;padding-bottom:5rem;">
+        <div data-animate class="deco-rule justify-center mb-6" style="{{ $catHasMedia ? 'color:#B8965A' : '' }}">Koleksi</div>
         <h1 data-animate data-delay="100"
-            style="font-family:'Playfair Display',serif;font-size:clamp(2rem,4vw,3rem);font-weight:600;color:#1C1917;line-height:1.2;">
+            style="font-family:'Playfair Display',serif;font-size:clamp(2rem,4vw,3rem);font-weight:600;line-height:1.2;color:{{ $catHasMedia ? '#FAF8F5' : '#1C1917' }};">
             @if($activeCategory)
                 {{ $categories->firstWhere('slug', $activeCategory)?->name ?? 'Kategori' }}
             @else
                 Semua Koleksi
             @endif
         </h1>
-        <p data-animate data-delay="200" class="mt-4 text-base" style="color:#78716C;font-family:'Inter',sans-serif;font-weight:300;">
+        <p data-animate data-delay="200" class="mt-4 text-base"
+           style="font-family:'Inter',sans-serif;font-weight:300;color:{{ $catHasMedia ? 'rgba(250,248,245,0.72)' : '#78716C' }};">
             @if(request('cari'))
                 Hasil pencarian untuk "<em>{{ request('cari') }}</em>"
             @else
@@ -126,6 +150,7 @@
                            class="block relative overflow-hidden" style="aspect-ratio:3/4;">
                             @if($product->thumbnail)
                                 <img src="{{ $product->thumbnail_url }}" alt="{{ $product->name }}"
+                                     loading="lazy" decoding="async"
                                      class="card-img w-full h-full object-cover">
                             @else
                                 <div class="card-img w-full h-full flex items-center justify-center" style="background:#EDE8DF;">

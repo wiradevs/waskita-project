@@ -13,6 +13,9 @@ class ViewServiceProvider extends ServiceProvider
     public function boot(): void
     {
         View::composer('*', function ($view) {
+            if (str_starts_with($view->name(), 'admin.')) {
+                return;
+            }
             $settings = CompanySetting::all()->pluck('value', 'key');
             $view->with('settings', $settings);
         });

@@ -9,217 +9,319 @@
 
 {{-- ── HERO ─────────────────────────────────────────── --}}
 @php $hasVideo = (bool)$settings->get('hero_video'); $hasImage = (bool)$settings->get('hero_image'); @endphp
-<section id="hero-section" class="relative overflow-hidden" style="background:#0E0C0A;min-height:82vh;">
+<section id="hero-section" class="relative overflow-hidden" style="background:#100D0A;min-height:72vh;">
 
-    {{-- ── Page-load curtain ───────────────────────── --}}
+    {{-- ── Curtain --}}
     <div id="hero-curtain"></div>
 
-    {{-- ── Media Background ───────────────────────── --}}
+    {{-- ── Gold particles --}}
+    <div class="hero-particles" aria-hidden="true">
+        @php $pData = [[8,0,6,'15px'],[17,1.2,8,'-12px'],[27,0.5,7,'10px'],[36,2.1,9,'-8px'],[45,0.8,6,'18px'],[53,1.7,8,'-15px'],[62,0.3,7,'6px'],[71,2.5,9,'-20px'],[80,1.0,6,'14px'],[89,1.8,8,'-10px'],[13,3.2,7,'8px'],[33,0.6,9,'-18px'],[57,2.8,6,'20px'],[75,1.4,8,'-6px'],[92,0.2,7,'12px'],[48,3.5,9,'-14px']]; @endphp
+        @foreach($pData as $p)
+        <span class="hp" style="left:{{ $p[0] }}%;--delay:{{ $p[1] }}s;--dur:{{ $p[2] }}s;--drift:{{ $p[3] }};--size:{{ ($loop->index % 3 === 0) ? '2px' : '1.5px' }};"></span>
+        @endforeach
+    </div>
+
+    {{-- ── Ambient light bloom --}}
+    <div class="hero-bloom" aria-hidden="true"></div>
+
+    {{-- ── Media --}}
     @if($hasVideo)
-    <video id="hero-video" autoplay muted loop playsinline
-           style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;">
-        <source src="{{ Storage::url($settings->get('hero_video')) }}" type="video/mp4">
+    <video id="hero-video" muted loop playsinline preload="none"
+           data-lazy-video="{{ Storage::url($settings->get('hero_video')) }}"
+           @if($hasImage) poster="{{ Storage::url($settings->get('hero_image')) }}" @endif
+           style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;background:#100D0A;">
     </video>
     @elseif($hasImage)
     <div style="position:absolute;inset:0;z-index:0;">
-        <img src="{{ Storage::url($settings->get('hero_image')) }}"
-             alt="" style="width:100%;height:100%;object-fit:cover;">
+        <img src="{{ Storage::url($settings->get('hero_image')) }}" alt=""
+             style="width:100%;height:100%;object-fit:cover;">
     </div>
     @else
-    <div style="position:absolute;inset:0;z-index:0;background:radial-gradient(ellipse at 60% 40%,rgba(184,150,90,0.12) 0%,transparent 65%),#0E0C0A;"></div>
+    {{-- Ambient warm wood background --}}
+    <div style="position:absolute;inset:0;z-index:0;
+        background:
+            radial-gradient(ellipse 80% 60% at 50% 30%, rgba(101,62,20,0.45) 0%, transparent 70%),
+            radial-gradient(ellipse 50% 40% at 20% 70%, rgba(184,150,90,0.1) 0%, transparent 60%),
+            radial-gradient(ellipse 40% 50% at 80% 60%, rgba(184,150,90,0.08) 0%, transparent 60%),
+            #100D0A;">
+    </div>
     @endif
 
-    {{-- ── Overlay ─────────────────────────────────── --}}
-    <div style="position:absolute;inset:0;z-index:1;background:rgba(14,12,10,0.68);pointer-events:none;"></div>
-    <div style="position:absolute;inset:0;z-index:1;background:linear-gradient(to top,rgba(14,12,10,0.7) 0%,transparent 40%);pointer-events:none;"></div>
+    {{-- ── Overlays --}}
+    <div style="position:absolute;inset:0;z-index:1;background:rgba(12,9,6,0.62);pointer-events:none;"></div>
+    <div style="position:absolute;inset:0;z-index:1;background:linear-gradient(to top,rgba(12,9,6,0.85) 0%,rgba(12,9,6,0.1) 45%,transparent 100%);pointer-events:none;"></div>
+    <div style="position:absolute;top:0;left:0;right:0;height:140px;z-index:1;background:linear-gradient(to bottom,rgba(12,9,6,0.55) 0%,transparent 100%);pointer-events:none;"></div>
 
-    {{-- ── Content ─────────────────────────────────── --}}
-    <div style="position:relative;z-index:10;min-height:82vh;display:flex;align-items:center;padding-top:4.5rem;padding-bottom:4rem;">
-        <div class="w-full px-5 sm:px-8 lg:px-10" style="max-width:900px;margin:0 auto;text-align:center;">
+    {{-- ── Content --}}
+    <div style="position:relative;z-index:10;min-height:72vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4.5rem 1.5rem 3.5rem;text-align:center;">
 
-            {{-- ── Outer frame (landscape panel) ─── --}}
-            <div class="hero-frame" style="position:relative;display:inline-block;width:100%;">
-
-                {{-- Corner diamond ornaments --}}
-                <span class="hc-diamond" style="top:-5px;left:-5px;"></span>
-                <span class="hc-diamond" style="top:-5px;right:-5px;"></span>
-                <span class="hc-diamond" style="bottom:-5px;left:-5px;"></span>
-                <span class="hc-diamond" style="bottom:-5px;right:-5px;"></span>
-
-                {{-- Inner recessed panel --}}
-                <div style="position:absolute;inset:6px;border:1px solid rgba(184,150,90,0.13);pointer-events:none;"></div>
-
-                {{-- Content padding --}}
-                <div style="padding:2rem 3.5rem 1.875rem;">
-
-                    {{-- Top ornament bar --}}
-                    <div class="hero-fade-label" style="display:flex;align-items:center;justify-content:center;gap:0.875rem;margin-bottom:1.375rem;">
-                        <div style="height:1px;flex:1;background:linear-gradient(90deg,transparent,rgba(184,150,90,0.4));"></div>
-                        <span style="font-size:0.58rem;letter-spacing:0.38em;text-transform:uppercase;font-weight:500;color:#B8965A;font-family:'Inter',sans-serif;white-space:nowrap;">
-                            {{ $settings->get('company_name', 'Waskita') }} &ensp;·&ensp; Premium Furniture
-                        </span>
-                        <div style="height:1px;flex:1;background:linear-gradient(90deg,rgba(184,150,90,0.4),transparent);"></div>
-                    </div>
-
-                    {{-- Headline --}}
-                    <h1 style="font-family:'Playfair Display',serif;font-size:clamp(1.875rem,3.8vw,3rem);font-weight:600;line-height:1.12;color:#FAF8F5;margin:0;">
-                        <div class="hero-line hero-line-1">
-                            <span class="line-inner">{{ $settings->get('hero_title', 'Ruang yang Bercerita,') }}</span>
-                        </div>
-                        <div class="hero-line hero-line-2">
-                            <span class="line-inner" style="color:#D4AF7A;font-style:italic;">{{ $settings->get('company_tagline', 'Furnitur yang Menginspirasi.') }}</span>
-                        </div>
-                    </h1>
-
-                    {{-- Ornamental divider with center diamond --}}
-                    <div class="hero-separator" style="display:flex;align-items:center;justify-content:center;gap:0.75rem;margin:1.375rem auto;max-width:280px;">
-                        <div style="height:1px;flex:1;background:rgba(184,150,90,0.45);"></div>
-                        <svg width="8" height="8" viewBox="0 0 8 8" fill="#B8965A" style="flex-shrink:0;opacity:0.8;">
-                            <polygon points="4,0 8,4 4,8 0,4"/>
-                        </svg>
-                        <div style="height:1px;flex:1;background:rgba(184,150,90,0.45);"></div>
-                    </div>
-
-                    {{-- Subtitle --}}
-                    <p class="hero-slide-1" style="font-size:0.8125rem;line-height:1.85;color:rgba(250,248,245,0.55);font-family:'Inter',sans-serif;font-weight:300;margin:0 auto 1.625rem;max-width:460px;">
-                        {{ $settings->get('hero_subtitle', 'Furniture premium dengan desain timeless — menceritakan karakter dan gaya hidup Anda.') }}
-                    </p>
-
-                    {{-- CTAs --}}
-                    <div class="hero-slide-2" style="display:flex;flex-wrap:wrap;gap:0.625rem;justify-content:center;margin-bottom:1.75rem;">
-                        <a href="{{ route('catalog.index') }}" class="hero-primary-btn"
-                           style="display:inline-flex;align-items:center;gap:0.6rem;padding:0.688rem 1.625rem;font-size:0.58rem;letter-spacing:0.25em;text-transform:uppercase;font-weight:600;background:#B8965A;color:#FAF8F5;font-family:'Inter',sans-serif;text-decoration:none;">
-                            Jelajahi Koleksi
-                            <svg class="hero-arrow" style="width:0.8rem;height:0.8rem;" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"/>
-                            </svg>
-                        </a>
-                        @if($waNumber)
-                        <a href="{{ $waGeneral }}" target="_blank"
-                           style="display:inline-flex;align-items:center;padding:0.688rem 1.625rem;font-size:0.58rem;letter-spacing:0.25em;text-transform:uppercase;font-weight:600;border:1px solid rgba(250,248,245,0.22);color:rgba(250,248,245,0.72);font-family:'Inter',sans-serif;text-decoration:none;transition:border-color 0.3s;">
-                            Konsultasi Gratis
-                        </a>
-                        @endif
-                    </div>
-
-                    {{-- Stats strip --}}
-                    <div class="hero-slide-3" style="display:flex;align-items:center;justify-content:center;border-top:1px solid rgba(184,150,90,0.18);padding-top:1.125rem;">
-                        <div style="padding:0 2rem;text-align:center;">
-                            <div class="hero-stat" data-target="500" data-suffix="+"
-                                 style="font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:600;color:#FAF8F5;line-height:1;">0+</div>
-                            <div style="font-size:0.52rem;letter-spacing:0.25em;text-transform:uppercase;margin-top:0.25rem;color:rgba(184,150,90,0.6);font-family:'Inter',sans-serif;">Produk</div>
-                        </div>
-                        <div style="width:1px;height:1.75rem;background:rgba(184,150,90,0.2);flex-shrink:0;"></div>
-                        <div style="padding:0 2rem;text-align:center;">
-                            <div class="hero-stat" data-target="10" data-suffix="+"
-                                 style="font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:600;color:#FAF8F5;line-height:1;">0+</div>
-                            <div style="font-size:0.52rem;letter-spacing:0.25em;text-transform:uppercase;margin-top:0.25rem;color:rgba(184,150,90,0.6);font-family:'Inter',sans-serif;">Tahun</div>
-                        </div>
-                        <div style="width:1px;height:1.75rem;background:rgba(184,150,90,0.2);flex-shrink:0;"></div>
-                        <div style="padding:0 2rem;text-align:center;">
-                            <div class="hero-stat" data-target="1000" data-suffix="+"
-                                 style="font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:600;color:#FAF8F5;line-height:1;">0+</div>
-                            <div style="font-size:0.52rem;letter-spacing:0.25em;text-transform:uppercase;margin-top:0.25rem;color:rgba(184,150,90,0.6);font-family:'Inter',sans-serif;">Pelanggan</div>
-                        </div>
-                    </div>
-
-                </div>{{-- /content padding --}}
-            </div>{{-- /hero-frame --}}
+        {{-- Top botanical label --}}
+        <div class="h-label" style="margin-bottom:1.25rem;">
+            {{-- Small Jepara leaf ornament --}}
+            <svg width="140" height="18" viewBox="0 0 140 18" fill="none" style="display:block;margin:0 auto 0.5rem;">
+                <path d="M70,9 C62,9 56,5 52,9 C56,13 62,13 70,9Z" fill="#B8965A" opacity="0.55"/>
+                <path d="M70,9 C78,9 84,5 88,9 C84,13 78,13 70,9Z" fill="#B8965A" opacity="0.55"/>
+                <path d="M52,9 C44,9 38,6 35,9 C38,12 44,12 52,9Z" fill="#B8965A" opacity="0.35"/>
+                <path d="M88,9 C96,9 102,6 105,9 C102,12 96,12 88,9Z" fill="#B8965A" opacity="0.35"/>
+                <line x1="0" y1="9" x2="32" y2="9" stroke="#B8965A" stroke-width="0.5" opacity="0.3"/>
+                <line x1="108" y1="9" x2="140" y2="9" stroke="#B8965A" stroke-width="0.5" opacity="0.3"/>
+                <circle cx="70" cy="9" r="1.5" fill="#B8965A" opacity="0.9"/>
+            </svg>
+            <span style="font-family:'Inter',sans-serif;font-size:0.6rem;letter-spacing:0.42em;text-transform:uppercase;font-weight:400;color:rgba(184,150,90,0.8);">
+                {{ $settings->get('company_name', 'Waskita') }} &nbsp;&middot;&nbsp; Furniture Jepara
+            </span>
         </div>
+
+        {{-- Headline --}}
+        <h1 id="hero-h1" style="font-family:'Playfair Display',serif;font-size:clamp(1.75rem,3.5vw,2.875rem);font-weight:600;line-height:1.18;color:#FAF8F5;margin:0;max-width:600px;">
+            <div class="hero-line hero-line-1">
+                <span class="line-inner" data-words>{{ $settings->get('hero_title', 'Ruang yang Bercerita,') }}</span>
+            </div>
+            <div class="hero-line hero-line-2" style="margin-top:0.1em;">
+                <span class="line-inner" data-words data-gold style="color:#D4AF7A;font-style:italic;">
+                    {{ $settings->get('company_tagline', 'Furnitur yang Menginspirasi.') }}
+                </span>
+            </div>
+        </h1>
+
+        {{-- Jepara ornamental divider (self-drawing) --}}
+        <div class="h-ornament" style="margin:1.25rem auto;">
+            <svg width="340" height="32" viewBox="0 0 340 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                {{-- Lines - draw animation --}}
+                <line class="svg-draw" x1="0" y1="16" x2="118" y2="16" stroke="#B8965A" stroke-width="0.5" opacity="0.35" style="--len:118;--dly:1.45s"/>
+                <line class="svg-draw" x1="222" y1="16" x2="340" y2="16" stroke="#B8965A" stroke-width="0.5" opacity="0.35" style="--len:118;--dly:1.45s"/>
+                {{-- Left tendril --}}
+                <path class="svg-draw" d="M118,16 Q124,16 127,11 Q130,7 134,9 Q137,11 135,14 Q133,17 129,16 Q124,16 118,16"
+                      stroke="#B8965A" stroke-width="0.8" fill="none" opacity="0.7" style="--len:60;--dly:1.7s"/>
+                {{-- Left leaves --}}
+                <path class="svg-fade" d="M140,16 Q143,11 148,12 Q150,14 148,17 Q143,18 140,16Z" fill="#B8965A" opacity="0" style="--dly:1.9s;--op:0.45"/>
+                <path class="svg-fade" d="M152,16 Q154,13 157,14 Q156,17 152,16Z" fill="#B8965A" opacity="0" style="--dly:2.0s;--op:0.3"/>
+                {{-- Center medallion --}}
+                <g transform="translate(170,16)">
+                    <circle class="svg-draw" r="7" stroke="#B8965A" stroke-width="0.7" fill="none" opacity="0.5" style="--len:44;--dly:1.55s"/>
+                    <path class="svg-fade" d="M0,-7 Q3,-3 0,0 Q-3,-3 0,-7Z" fill="#B8965A" opacity="0" style="--dly:1.85s;--op:0.4"/>
+                    <path class="svg-fade" d="M0,7 Q3,3 0,0 Q-3,3 0,7Z" fill="#B8965A" opacity="0" style="--dly:1.88s;--op:0.4"/>
+                    <path class="svg-fade" d="M-7,0 Q-3,3 0,0 Q-3,-3 -7,0Z" fill="#B8965A" opacity="0" style="--dly:1.91s;--op:0.4"/>
+                    <path class="svg-fade" d="M7,0 Q3,3 0,0 Q3,-3 7,0Z" fill="#B8965A" opacity="0" style="--dly:1.94s;--op:0.4"/>
+                    <circle class="svg-pulse" r="2.5" fill="#B8965A" opacity="0.85"/>
+                </g>
+                {{-- Right leaves --}}
+                <path class="svg-fade" d="M188,16 Q186,13 183,14 Q184,17 188,16Z" fill="#B8965A" opacity="0" style="--dly:2.0s;--op:0.3"/>
+                <path class="svg-fade" d="M200,16 Q197,11 192,12 Q190,14 192,17 Q197,18 200,16Z" fill="#B8965A" opacity="0" style="--dly:1.9s;--op:0.45"/>
+                {{-- Right tendril --}}
+                <path class="svg-draw" d="M222,16 Q216,16 213,11 Q210,7 206,9 Q203,11 205,14 Q207,17 211,16 Q216,16 222,16"
+                      stroke="#B8965A" stroke-width="0.8" fill="none" opacity="0.7" style="--len:60;--dly:1.7s"/>
+            </svg>
+        </div>
+
+        {{-- Subtitle --}}
+        <p class="h-slide-1" style="font-family:'Inter',sans-serif;font-size:0.8125rem;line-height:1.8;color:rgba(250,248,245,0.52);font-weight:300;max-width:400px;margin:0 auto 1.625rem;letter-spacing:0.02em;">
+            {{ $settings->get('hero_subtitle', 'Keahlian ukir Jepara yang diwariskan — menghadirkan furniture timeless untuk setiap sudut ruang Anda.') }}
+        </p>
+
+        {{-- CTAs --}}
+        <div class="h-slide-2" style="display:flex;flex-wrap:wrap;gap:0.625rem;justify-content:center;margin-bottom:2rem;">
+            <a href="{{ route('catalog.index') }}" class="hero-primary-btn"
+               style="display:inline-flex;align-items:center;gap:0.65rem;padding:0.8rem 2rem;font-size:0.6rem;letter-spacing:0.28em;text-transform:uppercase;font-weight:600;background:#B8965A;color:#FAF8F5;font-family:'Inter',sans-serif;text-decoration:none;">
+                Jelajahi Koleksi
+                <svg class="hero-arrow" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"/>
+                </svg>
+            </a>
+            @if($waNumber)
+            <a href="{{ $waGeneral }}" target="_blank"
+               style="display:inline-flex;align-items:center;padding:0.8rem 2rem;font-size:0.6rem;letter-spacing:0.28em;text-transform:uppercase;font-weight:600;border:1px solid rgba(250,248,245,0.2);color:rgba(250,248,245,0.7);font-family:'Inter',sans-serif;text-decoration:none;transition:border-color 0.3s,color 0.3s;">
+                Konsultasi Gratis
+            </a>
+            @endif
+        </div>
+
     </div>
 
-    {{-- ── Video controls ───────────────────────────── --}}
+    {{-- Video controls (desktop only — video itself doesn't load on mobile) --}}
     @if($hasVideo)
-    <button id="video-toggle"
-            style="position:absolute;bottom:1.5rem;right:1.5rem;z-index:20;width:36px;height:36px;border-radius:50%;border:1px solid rgba(250,248,245,0.2);background:rgba(14,12,10,0.45);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:border-color 0.3s;"
+    <button id="video-toggle" class="hero-video-controls"
+            style="position:absolute;bottom:1.75rem;right:1.75rem;z-index:20;width:36px;height:36px;border-radius:50%;border:1px solid rgba(250,248,245,0.18);background:rgba(12,9,6,0.5);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:border-color 0.3s;"
             aria-label="Pause/Play video">
-        <svg id="icon-pause" style="width:12px;height:12px;color:#FAF8F5;" fill="currentColor" viewBox="0 0 24 24">
+        <svg id="icon-pause" style="width:11px;height:11px;color:#FAF8F5;" fill="currentColor" viewBox="0 0 24 24">
             <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
         </svg>
-        <svg id="icon-play" style="width:12px;height:12px;color:#FAF8F5;display:none;" fill="currentColor" viewBox="0 0 24 24">
+        <svg id="icon-play" style="width:11px;height:11px;color:#FAF8F5;display:none;" fill="currentColor" viewBox="0 0 24 24">
             <path d="M8 5v14l11-7z"/>
         </svg>
     </button>
-    <div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:rgba(250,248,245,0.06);z-index:20;">
+    <div class="hero-video-controls" style="position:absolute;bottom:0;left:0;right:0;height:2px;background:rgba(250,248,245,0.05);z-index:20;">
         <div id="video-progress" style="height:100%;width:0%;background:#B8965A;transition:width 0.5s linear;"></div>
     </div>
     @endif
+
+    {{-- Scroll indicator --}}
+    <div class="h-slide-3" style="position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:0.4rem;z-index:15;">
+        <span style="font-size:0.52rem;letter-spacing:0.3em;text-transform:uppercase;color:rgba(250,248,245,0.25);font-family:'Inter',sans-serif;">Scroll</span>
+        <div style="width:1px;height:36px;overflow:hidden;position:relative;background:rgba(250,248,245,0.08);">
+            <div style="position:absolute;inset:0;background:#B8965A;animation:scrollDot 1.8s ease-in-out 2.5s infinite;"></div>
+        </div>
+    </div>
 
 </section>
 
 <style>
 /* ── Curtain ──────────────────────────────────────────── */
 #hero-curtain {
-    position:absolute;inset:0;z-index:100;background:#0E0C0A;
+    position:absolute;inset:0;z-index:100;background:#100D0A;
     transform-origin:top;
-    animation:curtainReveal 1.0s cubic-bezier(0.77,0,0.175,1) 0.1s both;
+    animation:curtainReveal 1.1s cubic-bezier(0.77,0,0.175,1) 0.1s both;
     pointer-events:none;
 }
 @keyframes curtainReveal { 0%{transform:scaleY(1);} 100%{transform:scaleY(0);} }
 
-/* ── Frame box ────────────────────────────────────────── */
-.hero-frame {
-    border:1px solid rgba(184,150,90,0.32);
+/* ── Label + ornament fade --*/
+.h-label {
     opacity:0;
-    animation:heroFadeFrame 0.8s ease 0.7s forwards;
+    animation:hFade 1s ease 0.8s forwards;
 }
-@keyframes heroFadeFrame { to { opacity:1; } }
-
-/* ── Corner diamond ornaments ─────────────────────────── */
-.hc-diamond {
-    position:absolute;width:9px;height:9px;
-    background:#B8965A;
-    transform:rotate(45deg);
-    opacity:0;
-    animation:hcFade 0.5s ease 1.1s forwards;
-}
-@keyframes hcFade { to { opacity:0.85; } }
-
-/* ── Label ────────────────────────────────────────────── */
-.hero-fade-label {
-    opacity:0;
-    animation:heroFadeLabel 0.7s ease 1.0s forwards;
-}
-@keyframes heroFadeLabel { to { opacity:1; } }
 
 /* ── Headline reveal ──────────────────────────────────── */
 .hero-line { overflow:hidden; }
 .hero-line .line-inner {
-    display:block;transform:translateY(105%);opacity:0;
-    animation:heroLineUp 0.9s cubic-bezier(0.22,1,0.36,1) both;
+    display:block;
+    transform:translateY(108%);
+    opacity:0;
+    animation:heroLineUp 1.1s cubic-bezier(0.16,1,0.3,1) both;
 }
-.hero-line-1 .line-inner { animation-delay:1.05s; }
-.hero-line-2 .line-inner { animation-delay:1.2s; }
+.hero-line-1 .line-inner { animation-delay:1.0s; }
+.hero-line-2 .line-inner { animation-delay:1.18s; }
 @keyframes heroLineUp { to { transform:translateY(0);opacity:1; } }
 
-/* ── Separator ────────────────────────────────────────── */
-.hero-separator {
-    transform:scaleX(0);transform-origin:center;
-    animation:heroScaleX 0.8s cubic-bezier(0.22,1,0.36,1) 1.35s both;
+/* ── Ornament draw ────────────────────────────────────── */
+.h-ornament {
+    opacity:0;
+    transform:scaleX(0.6);
+    animation:hOrnament 1s cubic-bezier(0.16,1,0.3,1) 1.38s forwards;
 }
-@keyframes heroScaleX { to { transform:scaleX(1); } }
+@keyframes hOrnament { to { opacity:1;transform:scaleX(1); } }
 
 /* ── Slide-up sequence ───────────────────────────────── */
-.hero-slide-1,.hero-slide-2,.hero-slide-3 {
-    opacity:0;transform:translateY(18px);
-    animation:heroSlideUp 0.8s cubic-bezier(0.22,1,0.36,1) both;
+.h-slide-1,.h-slide-2,.h-slide-3 {
+    opacity:0;transform:translateY(22px);
+    animation:hSlideUp 0.9s cubic-bezier(0.16,1,0.3,1) both;
 }
-.hero-slide-1 { animation-delay:1.45s; }
-.hero-slide-2 { animation-delay:1.58s; }
-.hero-slide-3 { animation-delay:1.7s; }
-@keyframes heroSlideUp { to { opacity:1;transform:translateY(0); } }
+.h-slide-1 { animation-delay:1.55s; }
+.h-slide-2 { animation-delay:1.7s; }
+.h-slide-3 { animation-delay:1.85s; }
+@keyframes hSlideUp { to { opacity:1;transform:translateY(0); } }
+@keyframes hFade    { to { opacity:1; } }
 
 /* ── CTA ─────────────────────────────────────────────── */
-.hero-primary-btn { transition:opacity 0.25s; }
-.hero-primary-btn:hover { opacity:0.85; }
-.hero-primary-btn .hero-arrow { transition:transform 0.3s cubic-bezier(0.22,1,0.36,1); }
-.hero-primary-btn:hover .hero-arrow { transform:translateX(4px); }
+.hero-primary-btn { transition:background 0.3s,opacity 0.3s; }
+.hero-primary-btn:hover { opacity:0.88; }
+.hero-primary-btn .hero-arrow { transition:transform 0.35s cubic-bezier(0.16,1,0.3,1); }
+.hero-primary-btn:hover .hero-arrow { transform:translateX(5px); }
 
-/* ── Video toggle ────────────────────────────────────── */
-#video-toggle:hover { border-color:rgba(184,150,90,0.6); }
+/* ── Video ────────────────────────────────────────────── */
+#video-toggle:hover { border-color:rgba(184,150,90,0.65); }
+/* Video itself is skipped on mobile to save bandwidth — hide its controls there too */
+@media (max-width: 767px) {
+    .hero-video-controls { display:none !important; }
+}
 
 /* ── Scroll dot ──────────────────────────────────────── */
 @keyframes scrollDot { 0%{transform:translateY(-100%);} 100%{transform:translateY(100%);} }
+
+/* ── Gold Particles ───────────────────────────────────── */
+.hero-particles {
+    position:absolute;inset:0;z-index:2;pointer-events:none;overflow:hidden;
+}
+.hp {
+    position:absolute;
+    bottom:-6px;
+    width:var(--size, 1.5px);
+    height:var(--size, 1.5px);
+    border-radius:50%;
+    background:radial-gradient(circle, #D4AF7A 0%, rgba(212,175,122,0.4) 60%, transparent 100%);
+    opacity:0;
+    animation:particleFloat var(--dur, 7s) ease-in-out var(--delay, 0s) infinite;
+    will-change:transform,opacity;
+}
+@keyframes particleFloat {
+    0%   { transform:translateY(0)           translateX(0)              scale(0);   opacity:0; }
+    8%   { opacity:0.85; scale:1; }
+    50%  { transform:translateY(-45vh)        translateX(var(--drift, 10px)); opacity:0.6; }
+    85%  { opacity:0.15; }
+    100% { transform:translateY(-85vh)        translateX(calc(var(--drift, 10px) * 1.6)); opacity:0; scale:0.5; }
+}
+
+/* ── Ambient bloom ────────────────────────────────────── */
+.hero-bloom {
+    position:absolute;
+    top:50%; left:50%;
+    transform:translate(-50%,-55%);
+    width:min(600px, 90vw);
+    height:min(400px, 60vh);
+    border-radius:50%;
+    background:radial-gradient(ellipse, rgba(184,150,90,0.07) 0%, transparent 70%);
+    z-index:2;
+    pointer-events:none;
+    animation:bloomBreath 6s ease-in-out infinite;
+    will-change:transform,opacity;
+}
+@keyframes bloomBreath {
+    0%,100% { transform:translate(-50%,-55%) scale(1);   opacity:0.6; }
+    50%      { transform:translate(-50%,-58%) scale(1.12); opacity:1;   }
+}
+
+/* ── SVG self-draw ────────────────────────────────────── */
+.svg-draw {
+    stroke-dasharray: var(--len, 120);
+    stroke-dashoffset: var(--len, 120);
+    animation: svgDraw 1.1s cubic-bezier(0.16,1,0.3,1) var(--dly, 1.4s) forwards;
+}
+@keyframes svgDraw { to { stroke-dashoffset: 0; } }
+
+.svg-fade {
+    animation: svgFadeIn 0.5s ease var(--dly, 1.8s) forwards;
+}
+@keyframes svgFadeIn { to { opacity: var(--op, 0.4); } }
+
+.svg-pulse {
+    animation: svgPulse 2.4s ease-in-out 2.1s infinite;
+    transform-origin: center;
+    transform-box: fill-box;
+}
+@keyframes svgPulse {
+    0%,100% { r:2.5; opacity:0.85; }
+    50%      { r:3.5; opacity:0.5;  }
+}
+
+/* ── Word-by-word stagger ─────────────────────────────── */
+.hw {
+    display:inline-block;
+    opacity:0;
+    transform:translateY(28px) rotate(2deg);
+    animation:hwIn 0.75s cubic-bezier(0.16,1,0.3,1) var(--hw-delay, 0s) forwards;
+}
+@keyframes hwIn {
+    to { opacity:1; transform:translateY(0) rotate(0deg); }
+}
+
+/* ── Label shimmer ────────────────────────────────────── */
+.h-label span {
+    position:relative;
+    display:inline-block;
+    overflow:hidden;
+}
+.h-label span::after {
+    content:'';
+    position:absolute;
+    top:0; left:-100%; width:60%; height:100%;
+    background:linear-gradient(90deg, transparent, rgba(212,175,122,0.45), transparent);
+    animation:shimmerSweep 2.2s ease 2.5s forwards;
+}
+@keyframes shimmerSweep {
+    0%   { left:-60%; opacity:1; }
+    100% { left:120%; opacity:0; }
+}
 </style>
 
 {{-- ── CATEGORIES ───────────────────────────────────── --}}
@@ -244,6 +346,7 @@
                style="aspect-ratio:3/4;background:#EDE8DF;">
                 @if($category->image)
                     <img src="{{ Storage::url($category->image) }}" alt="{{ $category->name }}"
+                         loading="lazy" decoding="async"
                          class="card-img w-full h-full object-cover">
                 @else
                     <div class="w-full h-full flex items-center justify-center" style="background:linear-gradient(135deg,#EDE8DF,#D5CCC2);">
@@ -304,6 +407,7 @@
                 <a href="{{ route('catalog.show', $product->slug) }}" class="block relative overflow-hidden" style="aspect-ratio:3/4;">
                     @if($product->thumbnail)
                         <img src="{{ $product->thumbnail_url }}" alt="{{ $product->name }}"
+                             loading="lazy" decoding="async"
                              class="card-img w-full h-full object-cover">
                     @else
                         <div class="w-full h-full flex items-center justify-center" style="background:#EDE8DF;">
@@ -399,7 +503,7 @@
                 <div class="aspect-[4/5] relative" style="background:#EDE8DF;">
                     @if($settings->get('hero_image'))
                         <img src="{{ Storage::url($settings->get('hero_image')) }}"
-                             alt="About" class="w-full h-full object-cover">
+                             alt="About" loading="lazy" decoding="async" class="w-full h-full object-cover">
                     @else
                         <div class="w-full h-full flex items-center justify-center">
                             <span style="font-family:'Playfair Display',serif;font-size:5rem;opacity:0.15;color:#1C1917;">

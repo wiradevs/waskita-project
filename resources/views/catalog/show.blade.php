@@ -82,7 +82,7 @@
                             style="border-color:#E5DDD5;"
                             onmouseover="this.style.borderColor='#B8965A'"
                             onmouseout="this.style.borderColor='#E5DDD5'">
-                        <img src="{{ $imgSrc }}" alt="" class="w-full h-full object-cover">
+                        <img src="{{ $imgSrc }}" alt="" loading="lazy" decoding="async" class="w-full h-full object-cover">
                     </button>
                     @endforeach
                 </div>
@@ -201,6 +201,7 @@
                    class="block relative overflow-hidden" style="aspect-ratio:3/4;">
                     @if($relItem->thumbnail)
                         <img src="{{ $relItem->thumbnail_url }}" alt="{{ $relItem->name }}"
+                             loading="lazy" decoding="async"
                              class="card-img w-full h-full object-cover">
                     @else
                         <div class="w-full h-full flex items-center justify-center" style="background:#EDE8DF;">

@@ -8,15 +8,38 @@
 @endphp
 
 {{-- ── Page Header ──────────────────────────────────── --}}
-<section class="py-24 text-center" style="background:#EDE8DF;">
-    <div class="max-w-3xl mx-auto px-5">
-        <div data-animate class="deco-rule justify-center mb-6">Mengenal Kami</div>
+@php
+    $aboutVideo    = $settings->get('about_video');
+    $aboutImage    = $settings->get('about_image');
+    $aboutHasMedia = $aboutVideo || $aboutImage;
+@endphp
+<section class="relative overflow-hidden text-center"
+         style="min-height:{{ $aboutHasMedia ? '340px' : 'auto' }};background:#EDE8DF;display:flex;align-items:center;justify-content:center;padding:{{ $aboutHasMedia ? '0' : '6rem 0' }}">
+
+    @if($aboutVideo)
+        <video muted loop playsinline preload="none"
+               data-lazy-video="{{ Storage::url($aboutVideo) }}"
+               @if($aboutImage) poster="{{ Storage::url($aboutImage) }}" @endif
+               style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;background:#EDE8DF;">
+        </video>
+    @elseif($aboutImage)
+        <img src="{{ Storage::url($aboutImage) }}" alt=""
+             style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;">
+    @endif
+
+    @if($aboutHasMedia)
+        <div style="position:absolute;inset:0;z-index:1;background:rgba(28,25,23,0.55);"></div>
+        <div style="position:absolute;inset:0;z-index:1;background:linear-gradient(to top,rgba(28,25,23,0.7) 0%,transparent 60%);"></div>
+    @endif
+
+    <div class="max-w-3xl mx-auto px-5" style="position:relative;z-index:10;padding-top:6rem;padding-bottom:6rem;">
+        <div data-animate class="deco-rule justify-center mb-6" style="{{ $aboutHasMedia ? 'color:#B8965A' : '' }}">Mengenal Kami</div>
         <h1 data-animate data-delay="100"
-            style="font-family:'Playfair Display',serif;font-size:clamp(2rem,4vw,3rem);font-weight:600;color:#1C1917;line-height:1.2;">
+            style="font-family:'Playfair Display',serif;font-size:clamp(2rem,4vw,3rem);font-weight:600;color:{{ $aboutHasMedia ? '#FAF8F5' : '#1C1917' }};line-height:1.2;">
             Tentang <em style="color:#B8965A;">{{ $settings->get('company_name', 'Waskita') }}</em>
         </h1>
         <p data-animate data-delay="200" class="mt-5 text-base leading-relaxed"
-           style="color:#78716C;font-family:'Inter',sans-serif;font-weight:300;max-width:480px;margin-left:auto;margin-right:auto;">
+           style="color:{{ $aboutHasMedia ? 'rgba(250,248,245,0.72)' : '#78716C' }};font-family:'Inter',sans-serif;font-weight:300;max-width:480px;margin-left:auto;margin-right:auto;">
             {{ $settings->get('company_tagline', 'Premium furniture untuk setiap sudut ruang Anda.') }}
         </p>
     </div>
@@ -26,7 +49,7 @@
 @if($settings->get('company_about'))
 <section class="py-24" style="background:#FAF8F5;">
     <div class="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
 
             {{-- Text --}}
             <div>
@@ -65,7 +88,7 @@
                     ['Keahlian', 'Pengrajin berpengalaman dengan keahlian turun-temurun mengerjakan setiap produk.'],
                     ['Kepercayaan', 'Lebih dari satu dekade kami menjaga kepercayaan ribuan pelanggan setia.'],
                 ]; @endphp
-                @foreach($values as $i => $value)
+                @foreach($values as $value)
                 <div style="background:#EDE8DF;padding:1.75rem;">
                     <div class="w-8 h-px mb-4" style="background:#B8965A;"></div>
                     <h4 style="font-family:'Playfair Display',serif;font-size:1.125rem;font-weight:500;color:#1C1917;margin-bottom:0.625rem;">
@@ -77,6 +100,7 @@
                 </div>
                 @endforeach
             </div>
+
         </div>
     </div>
 </section>

@@ -12,17 +12,34 @@ const observer = new IntersectionObserver((entries) => {
 
 document.querySelectorAll('[data-animate]').forEach(el => observer.observe(el));
 
-// ── Navbar Scroll Effect ───────────────────────────────
+// ── Navbar scroll effect ───────────────────────────────
 const navbar = document.getElementById('main-navbar');
 if (navbar) {
+    let lastY = 0;
+    const THRESHOLD = 80; // px dari top sebelum mulai hide
+
     const onScroll = () => {
-        navbar.classList.toggle('nav-scrolled', window.scrollY > 60);
+        const y = window.scrollY;
+        navbar.classList.toggle('nav-scrolled', y > 60);
+
+        if (y < THRESHOLD) {
+            // Selalu tampil di dekat top
+            navbar.classList.remove('nav-hidden');
+        } else if (y > lastY) {
+            // Scroll ke bawah → sembunyikan
+            navbar.classList.add('nav-hidden');
+        } else {
+            // Scroll ke atas → tampilkan
+            navbar.classList.remove('nav-hidden');
+        }
+        lastY = y;
     };
+
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
 }
 
-// ── Mobile Menu ────────────────────────────────────────
+// ── Mobile menu ────────────────────────────────────────
 const menuBtn    = document.getElementById('mobile-menu-btn');
 const mobileMenu = document.getElementById('mobile-menu');
 if (menuBtn && mobileMenu) {
@@ -33,6 +50,21 @@ if (menuBtn && mobileMenu) {
         menuBtn.querySelector('.icon-close').classList.toggle('hidden', !open);
     });
 }
+
+// ── Lazy header/hero video backgrounds ─────────────────
+// Videos are heavy (tens of MB); only fetch + play them on
+// desktop-sized viewports. Mobile keeps the poster/fallback image.
+(function () {
+    if (!window.matchMedia('(min-width: 768px)').matches) return;
+    document.querySelectorAll('video[data-lazy-video]').forEach(video => {
+        const source = document.createElement('source');
+        source.src = video.dataset.lazyVideo;
+        source.type = 'video/mp4';
+        video.appendChild(source);
+        video.load();
+        video.play().catch(() => {});
+    });
+})();
 
 // ── Hero Video Controls ────────────────────────────────
 const heroVideo    = document.getElementById('hero-video');
@@ -112,33 +144,29 @@ if (heroSection) {
     });
 }
 
+// ── Hero Word Split ────────────────────────────────────
+(function () {
+    const BASE_DELAY = 1050; // ms — after curtain + line reveal
+    document.querySelectorAll('[data-words]').forEach((span, lineIdx) => {
+        const isGold = span.hasAttribute('data-gold');
+        const lineDelay = BASE_DELAY + lineIdx * 180;
+        const text = span.textContent.trim();
+        const words = text.split(/\s+/);
+
+        span.textContent = '';
+        words.forEach((word, wi) => {
+            const w = document.createElement('span');
+            w.className = 'hw';
+            w.textContent = word;
+            if (isGold) w.style.color = '#D4AF7A';
+            w.style.setProperty('--hw-delay', (lineDelay + wi * 90) + 'ms');
+            span.appendChild(w);
+            if (wi < words.length - 1) span.appendChild(document.createTextNode(' '));
+        });
+    });
+})();
+
 // ── Hero Stats Counter ─────────────────────────────────
-function animateCounter(el) {
-    const target   = parseInt(el.dataset.target, 10);
-    const suffix   = el.dataset.suffix || '';
-    const duration = 1600;
-    const frameDur = 16;
-    const total    = duration / frameDur;
-    let frame = 0;
-
-    const easeOut = (t) => 1 - Math.pow(1 - t, 3);
-    const format  = (n) => n >= 1000 ? (n / 1000).toFixed(0) + 'K' : String(n);
-
-    const timer = setInterval(() => {
-        frame++;
-        const progress = easeOut(Math.min(frame / total, 1));
-        const current  = Math.round(target * progress);
-        el.textContent = format(current) + suffix;
-        if (frame >= total) {
-            el.textContent = format(target) + suffix;
-            clearInterval(timer);
-        }
-    }, frameDur);
-}
-
-setTimeout(() => {
-    document.querySelectorAll('.hero-stat').forEach(animateCounter);
-}, 2100);
 
 // ── Product image gallery (detail page) ───────────────
 window.changeImage = (src) => {
