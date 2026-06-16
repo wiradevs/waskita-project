@@ -190,11 +190,6 @@
 
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             @foreach($related as $i => $relItem)
-            @php
-                $relWaMsg = urlencode("Halo, saya ingin memesan:\n\n📦 *{$relItem->name}*" .
-                            ($relItem->formatted_price ? "\n💰 {$relItem->formatted_price}" : '') .
-                            "\n\nMohon informasi lebih lanjut. Terima kasih!");
-            @endphp
             <div data-animate data-delay="{{ ($i % 4) * 80 }}"
                  class="product-card group" style="background:#FAF8F5;">
                 <a href="{{ route('catalog.show', $relItem->slug) }}"
@@ -210,17 +205,6 @@
                             </span>
                         </div>
                     @endif
-                    <div class="card-overlay absolute inset-0 flex items-end justify-center pb-4"
-                         style="background:rgba(28,25,23,0.4);">
-                        @if($waNumber)
-                        <a href="https://wa.me/{{ $waNumber }}?text={{ $relWaMsg }}"
-                           target="_blank" onclick="event.stopPropagation()"
-                           class="text-xs tracking-widest uppercase font-semibold px-4 py-2"
-                           style="background:#B8965A;color:#FAF8F5;font-family:'Inter',sans-serif;">
-                            Pesan
-                        </a>
-                        @endif
-                    </div>
                 </a>
                 <div class="p-4" style="border-top:1px solid #E5DDD5;">
                     <a href="{{ route('catalog.show', $relItem->slug) }}">
